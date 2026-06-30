@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>オンライン・ビンゴゲーム (Online Bingo)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Kiwi+Maru:wght@400;500&family=M+PLUS+Rounded+1c:wght@400;700;800&display=swap');
+    body {
+      font-family: 'M PLUS Rounded 1c', 'Kiwi Maru', sans-serif;
+      background: radial-gradient(circle at top, #1e1b4b, #0f172a);
+      color: #f8fafc;
+    }
+    .bingo-cell {
+      aspect-ratio: 1 / 1;
+      transition: all 0.15s ease-in-out;
+      min-width: 0;
+      min-height: 0;
+    }
+    @media (max-height: 740px) {
+      .bingo-cell {
+        font-size: 0.75rem !important;
+        padding: 0.25rem !important;
+      }
+      header h1 {
+        font-size: 1rem !important;
+      }
+      header p {
+        display: none;
+      }
+    }
+    @keyframes pulse-gold {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.7); }
+      50% { transform: scale(1.03); box-shadow: 0 0 15px 8px rgba(250, 204, 21, 0.4); }
+    }
+    .drawn-number-anim {
+      animation: pulse-gold 1.5s infinite;
+    }
+    ::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+    ::-webkit-scrollbar-track {
+      background: rgba(15, 23, 42, 0.3);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.5);
+      border-radius: 999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.8);
+    }
+  </style>
+</head>
+<body class="h-screen w-screen overflow-hidden p-2 sm:p-4 flex items-center justify-center select-none">
+
+  <div class="w-full max-w-5xl h-full max-h-[96vh] bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-700/50 shadow-2xl flex flex-col justify-between overflow-hidden">
+    
+        <header class="bg-slate-800/50 border-b border-slate-700/50 px-4 py-2 flex items-center justify-between gap-3 shrink-0">
+      <div class="flex items-center gap-2">
+        <div class="bg-gradient-to-tr from-amber-500 to-rose-500 p-1.5 rounded-lg text-white shadow shadow-rose-950/40 shrink-0">
+          <i class="fa-solid fa-dice-five text-base"></i>
+        </div>
+        <div>
+          <h1 class="text-lg font-black bg-gradient-to-r from-amber-400 via-rose-400 to-indigo-400 bg-clip-text text-transparent leading-none">
+            BINGO ONLINE
+          </h1>
+          <p class="text-[9px] text-slate-400 mt-0.5">リアルタイム同期ビンゴ</p>
+        </div>
+      </div>
+            <div id="roomInfoBar" class="hidden flex items-center gap-2 bg-slate-950/60 px-2.5 py-1 rounded-lg border border-slate-800 shrink-0">
+        <span class="text-[10px] font-bold text-slate-300">コード: <span id="infoRoomCode" class="text-amber-400 font-mono tracking-wider">------</span></span>
+        <div class="h-2.5 w-px bg-slate-800"></div>
+        <span class="text-[10px] text-slate-300 flex items-center gap-1">
+          <i class="fa-solid fa-users text-indigo-400"></i>
+          <span id="infoUserCount">0</span>/30人
+        </span>
+      </div>
+    </header>
+
+        <main class="flex-1 p-2 sm:p-3 overflow-hidden flex flex-col justify-center min-h-0">
+
+            <section id="viewTitle" class="block py-4 text-center max-w-md mx-auto my-auto">
+        <h2 class="text-2xl sm:text-3xl font-extrabold mb-4 text-white tracking-wide leading-tight">
+          みんなで集まって、<br>
+          <span class="text-amber-400">ビンゴ</span>を遊ぼう！
+        </h2>
+        <p class="text-slate-400 mb-6 text-[11px] sm:text-xs leading-relaxed">
+          面倒なインストールや登録は一切不要。ルームを作成して、お友達にリンクを共有するだけで、スマホやPCからすぐに遊べます。最大30人まで同時に参加可能！
+        </p>
+
+        <div class="space-y-2.5">
+          <button id="btnCreateRoom" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-bold py-3 px-5 rounded-xl shadow-lg transform active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
+            <i class="fa-solid fa-plus-circle"></i>
+            新しくルームを作成する
+          </button>
+          <div class="flex items-center gap-2 my-3">
+            <hr class="flex-grow border-slate-800">
+            <span class="text-slate-500 text-[10px] uppercase font-bold">または</span>
+            <hr class="flex-grow border-slate-800">
+          </div>
+          <button id="btnJoinRoomInit" class="w-full bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700/80 font-bold py-3 px-5 rounded-xl shadow transform active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
+            <i class="fa-solid fa-arrow-right-to-bracket"></i>
+            招待コードを入力して参加する
+          </button>
+        </div>
+      </section>
+
+            <section id="viewJoin" class="hidden py-4 max-w-md mx-auto my-auto w-full">
+        <button id="btnBackToTitle" class="mb-3 flex items-center gap-1.5 text-[11px] text-slate-400 hover:text-white transition">
+          <i class="fa-solid fa-arrow-left"></i> タイトルに戻る
+        </button>
+        <h2 class="text-lg font-bold mb-3 text-white">ルームに参加する</h2>
+        <div class="space-y-3">
+          <div>
+            <label for="inputRoomCode" class="block text-[10px] font-medium text-slate-400 mb-1">6文字の招待コード</label>
+            <input type="text" id="inputRoomCode" placeholder="例: a1b2c3" maxlength="6" class="w-full text-center tracking-widest font-mono text-lg uppercase bg-slate-950 border border-slate-700 rounded-lg py-2 text-amber-400 placeholder:text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-transparent transition-all">
+          </div>
+          <div>
+            <label for="inputUserName" class="block text-[10px] font-medium text-slate-400 mb-1">あなたのお名前</label>
+            <input type="text" id="inputUserName" placeholder="プレイヤー名" maxlength="15" class="w-full bg-slate-950 border border-slate-700 rounded-lg py-2 px-3 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-transparent transition-all">
+          </div>
+          <button id="btnJoinRoomSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-5 rounded-lg shadow-lg transform active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
+            <i class="fa-solid fa-circle-play"></i>
+            ルームに接続
+          </button>
+        </div>
+      </section>
+
+            <section id="viewGame" class="hidden h-full flex flex-col justify-between overflow-hidden min-h-0">
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-3 h-full overflow-hidden min-h-0">
+          
+                    <div class="md:col-span-7 flex flex-col gap-2.5 h-full overflow-hidden min-h-0">
+            
+                        <div id="bingoCardArea" class="bg-slate-950/80 p-3 sm:p-4 rounded-xl border border-slate-800/80 flex flex-col justify-between flex-1 min-h-0 overflow-hidden">
+              <div class="flex items-center justify-between mb-1.5 shrink-0">
+                <h3 class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                  <i class="fa-solid fa-table-cells text-amber-500"></i>
+                  あなたのビンゴカード
+                </h3>
+                <span class="text-[9px] text-slate-400 hidden sm:inline">タップして手動で穴を開けます</span>
+              </div>
+              
+                            <div class="grid grid-cols-5 gap-1.5 mb-1 text-center text-base font-black shrink-0">
+                <span class="text-rose-400">B</span>
+                <span class="text-amber-400">I</span>
+                <span class="text-indigo-400">N</span>
+                <span class="text-emerald-400">G</span>
+                <span class="text-fuchsia-400">O</span>
+              </div>
+
+                            <div class="flex-1 flex items-center justify-center min-h-0 overflow-hidden">
+                <div id="bingoGrid" class="grid grid-cols-5 gap-1 sm:gap-1.5 w-full max-w-[42vh] aspect-square mx-auto">
+                                  </div>
+              </div>
+
+                            <div class="mt-1.5 flex justify-end shrink-0">
+                <button id="btnRegenCard" class="text-[9px] bg-slate-900 hover:bg-slate-800 text-slate-400 py-0.5 px-2 rounded-md border border-slate-800 transition flex items-center gap-1">
+                  <i class="fa-solid fa-rotate text-[8px]"></i> カードをシャッフル
+                </button>
+              </div>
+            </div>
+
+                        <div id="hostControls" class="hidden bg-slate-950/80 p-2.5 rounded-xl border border-rose-950/40 relative overflow-hidden shrink-0">
+              <div class="absolute top-0 right-0 bg-rose-600/20 text-rose-400 text-[8px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-bl-lg border-l border-b border-rose-900/50">
+                管理者
+              </div>
+              
+              <h3 class="text-[10px] font-bold text-rose-300 mb-1.5 flex items-center gap-1">
+                <i class="fa-solid fa-crown"></i>
+                ビンゴ抽選コントロール
+              </h3>
+              
+              <div class="grid grid-cols-2 gap-2">
+                                <button id="btnDrawNumber" class="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-extrabold py-1.5 px-2 rounded-lg shadow-md transform active:scale-95 transition-all flex flex-col items-center justify-center">
+                  <span class="text-xs">次の数字を引く</span>
+                  <span class="text-[8px] font-normal opacity-80">(1〜75から抽選)</span>
+                </button>
+                
+                                <button id="btnKickAll" class="bg-rose-950/40 hover:bg-rose-900/60 text-rose-200 border border-rose-900/60 font-bold py-1.5 px-2 rounded-lg transform active:scale-95 transition-all flex flex-col items-center justify-center">
+                  <span class="text-xs flex items-center gap-1"><i class="fa-solid fa-users-slash text-[10px]"></i> 全員を強制退出</span>
+                  <span class="text-[8px] font-normal text-rose-400/80">ゲーム終了＆ルーム消去</span>
+                </button>
+              </div>
+            </div>
+
+          </div>
+
+                    <div class="md:col-span-5 flex flex-col gap-2.5 h-full overflow-hidden min-h-0">
+            
+                        <div class="grid grid-cols-12 gap-2.5 shrink-0">
+                            <div class="col-span-5 bg-slate-950/80 p-2 rounded-xl border border-slate-800/80 text-center flex flex-col justify-center items-center">
+                <h3 class="text-[8px] font-bold text-slate-400 uppercase tracking-wider mb-1">現在の番号</h3>
+                <div class="flex items-center justify-center">
+                  <div id="currentDrawnNumber" class="w-11 h-11 rounded-full bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 text-white text-lg font-extrabold flex items-center justify-center shadow-md border-2 border-slate-900 drawn-number-anim">
+                    --
+                  </div>
+                </div>
+                <p id="drawStatusText" class="text-[8px] text-amber-400/80 mt-1 truncate w-full">抽選待ち</p>
+              </div>
+
+                            <div class="col-span-7 bg-slate-950/80 p-2 rounded-xl border border-slate-800/80 flex flex-col justify-between overflow-hidden">
+                <h3 class="text-[9px] font-bold text-slate-300 flex items-center justify-between mb-1">
+                  <span><i class="fa-solid fa-history"></i> 履歴</span>
+                  <span id="drawnCount" class="text-[8px] text-slate-500">0 / 75</span>
+                </h3>
+                <div id="historyNumbersGrid" class="grid grid-cols-10 gap-0.5 p-1 bg-slate-900/50 rounded-lg overflow-y-auto h-12 text-[7px] text-center font-bold">
+                                  </div>
+              </div>
+            </div>
+
+                        <div class="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80 flex flex-col shrink-0">
+              <div class="flex items-center justify-between mb-1.5">
+                <h3 class="text-[10px] font-bold text-slate-300 flex items-center gap-1">
+                  <i class="fa-solid fa-users text-indigo-400"></i>
+                  参加者 (<span id="userCountLabel">0</span>人)
+                </h3>
+                                <button id="btnLeaveRoom" class="bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-[9px] font-bold py-0.5 px-2 rounded shadow-md shadow-rose-900/30 transition flex items-center gap-1">
+                  <i class="fa-solid fa-door-open text-[8px]"></i> 退出
+                </button>
+              </div>
+              <div id="userList" class="flex flex-wrap gap-1 max-h-12 overflow-y-auto p-1 bg-slate-900/30 rounded-lg">
+                              </div>
+            </div>
+
+                        <div class="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80 flex flex-col flex-1 overflow-hidden min-h-[80px]">
+              <h3 class="text-[10px] font-bold text-slate-300 mb-1 flex items-center gap-1">
+                <i class="fa-solid fa-list-ul text-slate-400"></i>
+                イベントログ
+              </h3>
+              <div id="eventLogs" class="flex-1 overflow-y-auto text-[9px] space-y-0.5 p-1.5 bg-slate-900/50 rounded-lg font-mono text-slate-300">
+                              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+    </main>
+
+        <footer class="bg-slate-950/40 p-1.5 border-t border-slate-800/50 text-center text-[9px] text-slate-500 shrink-0">
+      オンライン・ビンゴ (Cloudflare Worker) &copy; 2026. リアルタイム同期
+    </footer>
+  </div>
+
+    <div id="inviteModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+    <div class="bg-slate-900 border border-slate-700 max-w-sm w-full p-4 rounded-2xl shadow-2xl text-center space-y-4">
+      <div class="bg-amber-500/10 w-10 h-10 rounded-xl flex items-center justify-center mx-auto text-amber-400 text-lg border border-amber-500/30">
+        <i class="fa-solid fa-share-nodes"></i>
+      </div>
+      <div>
+        <h3 class="text-base font-bold text-white">ルームを作成しました！</h3>
+        <p class="text-[10px] text-slate-400 mt-0.5">以下のコードまたはリンクを参加者にシェアしてください。</p>
+      </div>
+      
+            <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
+        <div class="text-[8px] text-slate-500 uppercase tracking-widest font-bold mb-0.5">招待コード</div>
+        <div id="modalRoomCode" class="text-xl font-black font-mono tracking-wider text-amber-400">------</div>
+      </div>
+
+            <div class="flex flex-col gap-1.5">
+        <button id="btnCopyLink" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg text-[11px] transition flex items-center justify-center gap-1.5">
+          <i class="fa-solid fa-copy"></i>
+          招待リンクをコピー
+        </button>
+        <button id="btnCopyCode" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 px-3 rounded-lg text-[11px] transition flex items-center justify-center gap-1.5 border border-slate-700">
+          <i class="fa-solid fa-clipboard"></i>
+          招待コードをコピー
+        </button>
+      </div>
+
+      <div class="pt-1.5 border-t border-slate-800">
+        <button id="btnCloseInviteModal" class="w-full bg-slate-750 hover:bg-slate-700 text-slate-300 font-bold py-2 px-3 rounded-lg text-[11px] transition">
+          閉じてビンゴを始める
+        </button>
+      </div>
+    </div>
+  </div>
+
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-1.5 max-w-sm pointer-events-none"></div>
+
+        <script>
+    const appId = typeof __app_id !== 'undefined' ? __app_id : 'bingo-app';
+
+    const WORKER_URL = "https://bingo.asukasa462.workers.dev/";
+
+    const CONNECTION_TIMEOUT_MS = 8000;
+
+    function buildWebSocketUrl(roomCode) {
+      if (WORKER_URL) {
+        const httpUrl = new URL(WORKER_URL);
+        const wsProtocol = httpUrl.protocol === 'https:' ? 'wss:' : 'ws:';
+        return `${wsProtocol}//${httpUrl.host}/ws/${roomCode}`;
+      }
+      const wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+      return `${wsProtocol}//${window.location.host}/ws/${roomCode}`;
+    }
+
+    let myState = {
+      roomCode: '',
+      isHost: false,
+      userName: '',
+      ws: null,
+      drawnNumbers: [], 
+      bingoCard: [],    
+      participants: []  
+    };
+
+    const viewTitle = document.getElementById('viewTitle');
+    const viewJoin = document.getElementById('viewJoin');
+    const viewGame = document.getElementById('viewGame');
+    
+    const btnCreateRoom = document.getElementById('btnCreateRoom');
+    const btnJoinRoomInit = document.getElementById('btnJoinRoomInit');
+    const btnBackToTitle = document.getElementById('btnBackToTitle');
+    const inputRoomCode = document.getElementById('inputRoomCode');
+    const inputUserName = document.getElementById('inputUserName');
+    const btnJoinRoomSubmit = document.getElementById('btnJoinRoomSubmit');
+    
+    const roomInfoBar = document.getElementById('roomInfoBar');
+    const infoRoomCode = document.getElementById('infoRoomCode');
+    const infoUserCount = document.getElementById('infoUserCount');
+    const userCountLabel = document.getElementById('userCountLabel');
+    const userList = document.getElementById('userList');
+    const eventLogs = document.getElementById('eventLogs');
+    const currentDrawnNumber = document.getElementById('currentDrawnNumber');
+    const drawStatusText = document.getElementById('drawStatusText');
+    const historyNumbersGrid = document.getElementById('historyNumbersGrid');
+    const bingoGrid = document.getElementById('bingoGrid');
+    
+    const hostControls = document.getElementById('hostControls');
+    const btnDrawNumber = document.getElementById('btnDrawNumber');
+    const btnKickAll = document.getElementById('btnKickAll');
+    const btnRegenCard = document.getElementById('btnRegenCard');
+    const btnLeaveRoom = document.getElementById('btnLeaveRoom');
+
+    const inviteModal = document.getElementById('inviteModal');
+    const modalRoomCode = document.getElementById('modalRoomCode');
+    const btnCopyLink = document.getElementById('btnCopyLink');
+    const btnCopyCode = document.getElementById('btnCopyCode');
+    const btnCloseInviteModal = document.getElementById('btnCloseInviteModal');
+
+    function showToast(message, type = 'info') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `p-3 rounded-xl shadow-lg border text-[11px] font-semibold flex items-center gap-2 transform translate-y-2 opacity-0 transition-all duration-300 pointer-events-auto max-w-xs `;
+      
+      if (type === 'error') {
+        toast.className += 'bg-rose-950/95 border-rose-800 text-rose-200';
+      } else if (type === 'success') {
+        toast.className += 'bg-emerald-950/95 border-emerald-800 text-emerald-200';
+      } else {
+        toast.className += 'bg-indigo-950/95 border-indigo-800 text-indigo-200';
+      }
+
+      const icon = type === 'error' ? 'fa-circle-xmark' : type === 'success' ? 'fa-circle-check' : 'fa-circle-info';
+      toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-2', 'opacity-0');
+      }, 50);
+
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-2');
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    function generateRoomCode() {
+      const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+      let code = '';
+      for (let i = 0; i < 6; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      return code;
+    }
+
+    function copyToClipboard(text, successMsg) {
+      const tempInput = document.createElement('input');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      try {
+        document.execCommand('copy');
+        showToast(successMsg, 'success');
+      } catch (err) {
+        showToast('コピーに失敗しました', 'error');
+      }
+      document.body.removeChild(tempInput);
+    }
+
+    function addLog(text, isSystem = true) {
+      const logItem = document.createElement('div');
+      logItem.className = isSystem ? 'text-slate-400' : 'text-amber-400 font-bold';
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+      logItem.innerHTML = `<span class="text-slate-600">[${timeStr}]</span> ${text}`;
+      eventLogs.appendChild(logItem);
+      eventLogs.scrollTop = eventLogs.scrollHeight;
+    }
+
+    function generateBingoCard() {
+      const card = [];
+      const ranges = [
+        { min: 1, max: 15 },
+        { min: 16, max: 30 },
+        { min: 31, max: 45 },
+        { min: 46, max: 60 },
+        { min: 61, max: 75 }
+      ];
+
+      for (let col = 0; col < 5; col++) {
+        const pool = [];
+        for (let i = ranges[col].min; i <= ranges[col].max; i++) {
+          pool.push(i);
+        }
+        
+        const selected = [];
+        for (let row = 0; row < 5; row++) {
+          const randIndex = Math.floor(Math.random() * pool.length);
+          selected.push(pool.splice(randIndex, 1)[0]);
+        }
+        card.push(selected);
+      }
+
+      const finalGrid = [];
+      for (let r = 0; r < 5; r++) {
+        for (let c = 0; c < 5; c++) {
+          const isFree = (r === 2 && c === 2);
+          finalGrid.push({
+            number: isFree ? 'FREE' : card[c][r],
+            checked: isFree ? true : false
+          });
+        }
+      }
+      return finalGrid;
+    }
+
+    function renderBingoCard() {
+      bingoGrid.innerHTML = '';
+      myState.bingoCard.forEach((cell, index) => {
+        const cellBtn = document.createElement('button');
+        cellBtn.type = 'button';
+        
+        let baseClass = "bingo-cell text-xs sm:text-sm md:text-base font-extrabold rounded-md md:rounded-lg flex items-center justify-center p-0.5 sm:p-1 transition border relative ";
+        
+        const isDrawn = myState.drawnNumbers.includes(cell.number);
+
+        if (cell.number === 'FREE') {
+          baseClass += "bg-gradient-to-tr from-indigo-500 to-purple-600 text-white border-indigo-400 shadow-md shadow-indigo-900/30";
+        } else if (cell.checked) {
+          baseClass += "bg-rose-500 text-white border-rose-400 shadow-md shadow-rose-900/20 animate-scale-up";
+        } else if (isDrawn) {
+          baseClass += "bg-slate-900 text-slate-300 border-slate-800 hover:border-slate-700 hover:bg-slate-850";
+        } else {
+          baseClass += "bg-slate-950 text-slate-600 border-slate-900 cursor-not-allowed";
+        }
+
+        cellBtn.className = baseClass;
+        
+        cellBtn.innerHTML = `
+          <span>${cell.number}</span>
+          ${cell.checked && cell.number !== 'FREE' ? '<span class="absolute bottom-1 right-1 w-1.5 h-1.5 bg-white rounded-full animate-ping"></span>' : ''}
+        `;
+
+        cellBtn.addEventListener('click', () => {
+          if (cell.number === 'FREE') return;
+          if (!myState.drawnNumbers.includes(cell.number)) {
+            showToast(`番号 ${cell.number} はまだ出ていません`, 'error');
+            return;
+          }
+          cell.checked = !cell.checked;
+          renderBingoCard();
+
+          if (cell.checked) {
+            showToast(`番号 ${cell.number} に穴を開けました`, 'info');
+          } else {
+            showToast(`番号 ${cell.number} の穴を閉じました`, 'info');
+          }
+          checkBingoStatus();
+        });
+
+        bingoGrid.appendChild(cellBtn);
+      });
+    }
+
+    function checkBingoStatus() {
+      const grid = myState.bingoCard;
+      let lineCount = 0;
+
+      for (let r = 0; r < 5; r++) {
+        let isRowChecked = true;
+        for (let c = 0; c < 5; c++) {
+          if (!grid[r * 5 + c].checked) isRowChecked = false;
+        }
+        if (isRowChecked) lineCount++;
+      }
+
+      for (let c = 0; c < 5; c++) {
+        let isColChecked = true;
+        for (let r = 0; r < 5; r++) {
+          if (!grid[r * 5 + c].checked) isColChecked = false;
+        }
+        if (isColChecked) lineCount++;
+      }
+
+      let diag1 = true;
+      for (let i = 0; i < 5; i++) {
+        if (!grid[i * 5 + i].checked) diag1 = false;
+      }
+      if (diag1) lineCount++;
+
+      let diag2 = true;
+      for (let i = 0; i < 5; i++) {
+        if (!grid[i * 5 + (4 - i)].checked) diag2 = false;
+      }
+      if (diag2) lineCount++;
+
+      if (lineCount > 0) {
+        showToast(`🎉 ビンゴ！ ${lineCount}ライン成立中！`, 'success');
+      }
+    }
+
+    function initHistoryNumbersGrid() {
+      historyNumbersGrid.innerHTML = '';
+      for (let i = 1; i <= 75; i++) {
+        const cell = document.createElement('div');
+        cell.id = `history-num-${i}`;
+        cell.className = 'bg-slate-950 text-slate-700 rounded p-0.5 border border-slate-900 transition-all';
+        cell.innerText = i;
+        historyNumbersGrid.appendChild(cell);
+      }
+    }
+
+    function updateHistoryNumbersGrid() {
+      for (let i = 1; i <= 75; i++) {
+        const cell = document.getElementById(`history-num-${i}`);
+        if (cell) {
+          cell.className = 'bg-slate-950 text-slate-700 rounded p-0.5 border border-slate-900 transition-all';
+        }
+      }
+      myState.drawnNumbers.forEach(num => {
+        const cell = document.getElementById(`history-num-${num}`);
+        if (cell) {
+          cell.className = 'bg-gradient-to-tr from-amber-500 to-rose-500 text-white rounded p-0.5 shadow border border-amber-400 font-extrabold scale-105';
+        }
+      });
+      document.getElementById('drawnCount').innerText = `${myState.drawnNumbers.length} / 75`;
+    }
+
+    function onNumberDrawn(num) {
+      currentDrawnNumber.classList.remove('drawn-number-anim');
+      void currentDrawnNumber.offsetWidth; 
+      currentDrawnNumber.innerText = num;
+      currentDrawnNumber.classList.add('drawn-number-anim');
+      
+      drawStatusText.innerText = `最新番号: ${num}`;
+      addLog(`最新の抽選結果: 【 ${num} 】`, false);
+      
+      const foundInCard = myState.bingoCard.find(cell => cell.number === num);
+      if (foundInCard) {
+        showToast(`💡 あなたのカードに 「${num}」 があります！タップしてマークしましょう。`, 'success');
+      } else {
+        showToast(`最新番号: ${num}`, 'info');
+      }
+    }
+
+    function updateRoomUI() {
+      infoRoomCode.innerText = myState.roomCode.toUpperCase();
+      infoUserCount.innerText = myState.participants.length;
+      userCountLabel.innerText = myState.participants.length;
+
+      userList.innerHTML = '';
+      myState.participants.forEach(user => {
+        const badge = document.createElement('span');
+        badge.className = `inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold border ` + 
+          (user.isHost 
+            ? 'bg-amber-950/60 text-amber-300 border-amber-800' 
+            : 'bg-slate-900 text-slate-300 border-slate-800');
+        badge.innerHTML = `
+          ${user.isHost ? '<i class="fa-solid fa-crown text-[8px]"></i>' : '<i class="fa-solid fa-user text-[8px]"></i>'}
+          ${user.name}
+        `;
+        userList.appendChild(badge);
+      });
+
+      if (myState.isHost) {
+        hostControls.classList.remove('hidden');
+      } else {
+        hostControls.classList.add('hidden');
+      }
+    }
+
+    function connectToRoom(code, name, isHost = false, onSuccess = () => {}, onError = () => {}) {
+      myState.roomCode = code.toLowerCase();
+      myState.userName = name || 'プレイヤー';
+      myState.isHost = isHost;
+
+      initHistoryNumbersGrid();
+
+      myState.bingoCard = generateBingoCard();
+      renderBingoCard();
+
+      const wsUrl = buildWebSocketUrl(myState.roomCode);
+      addLog(`ルーム 【 ${myState.roomCode} 】 に接続しています...`);
+
+      let settled = false;
+      let connectionTimer = null;
+
+      try {
+        myState.ws = new WebSocket(wsUrl);
+      } catch (e) {
+        showToast('サーバーに接続できませんでした。URLの設定を確認してください。', 'error');
+        onError();
+        return;
+      }
+
+      connectionTimer = setTimeout(() => {
+        if (!settled) {
+          settled = true;
+          showToast('サーバーへの接続がタイムアウトしました。', 'error');
+          try { myState.ws.close(); } catch (e) {}
+          myState.ws = null;
+          onError();
+        }
+      }, CONNECTION_TIMEOUT_MS);
+
+      myState.ws.addEventListener('open', () => {
+        addLog(`サーバー接続完了。認証情報を送信中...`);
+        myState.ws.send(JSON.stringify({
+          type: 'join',
+          name: myState.userName,
+          isHost: myState.isHost
+        }));
+      });
+
+      myState.ws.addEventListener('message', (event) => {
+        const data = JSON.parse(event.data);
+
+        if (data.type === 'error') {
+          showToast(data.message, 'error');
+          if (!settled) {
+            settled = true;
+            clearTimeout(connectionTimer);
+            myState.ws = null;
+            onError();
+          } else {
+            disconnectAndReset();
+          }
+          return;
+        }
+
+        if (!settled) {
+          settled = true;
+          clearTimeout(connectionTimer);
+          viewTitle.classList.add('hidden');
+          viewJoin.classList.add('hidden');
+          viewGame.classList.remove('hidden');
+          roomInfoBar.classList.remove('hidden');
+          onSuccess();
+        }
+
+        if (data.type === 'state') {
+          myState.drawnNumbers = data.drawnNumbers || [];
+          myState.participants = data.users || [];
+          updateRoomUI();
+          updateHistoryNumbersGrid();
+          renderBingoCard();
+          if (data.event) {
+            addLog(data.event);
+          }
+
+          if (myState.drawnNumbers.length > 0) {
+            const lastNum = myState.drawnNumbers[myState.drawnNumbers.length - 1];
+            currentDrawnNumber.innerText = lastNum;
+            drawStatusText.innerText = `最新番号: ${lastNum}`;
+          } else {
+            currentDrawnNumber.innerText = '--';
+            drawStatusText.innerText = '抽選待ち';
+          }
+        }
+
+        else if (data.type === 'draw') {
+          myState.drawnNumbers = data.drawnNumbers || [];
+          updateHistoryNumbersGrid();
+          renderBingoCard();
+          onNumberDrawn(data.number);
+        }
+
+        else if (data.type === 'kick_all') {
+          showToast(data.message || "ゲームがホストにより終了されました。", "error");
+          addLog("ホストによってルームがクリアされました。");
+          setTimeout(() => {
+            disconnectAndReset();
+          }, 1500);
+        }
+      });
+
+      myState.ws.addEventListener('close', () => {
+        addLog("サーバー接続が閉じられました。");
+        if (!settled) {
+          settled = true;
+          clearTimeout(connectionTimer);
+          myState.ws = null;
+          showToast('サーバーに接続できませんでした。', 'error');
+          onError();
+        }
+      });
+
+      myState.ws.addEventListener('error', () => {
+        if (!settled) {
+          settled = true;
+          clearTimeout(connectionTimer);
+          showToast('サーバーへの接続中にエラーが発生しました。', 'error');
+          try { myState.ws.close(); } catch (e) {}
+          myState.ws = null;
+          onError();
+        }
+      });
+    }
+
+    function disconnectAndReset() {
+      if (myState.ws) {
+        try { myState.ws.close(); } catch (e) {}
+        myState.ws = null;
+      }
+      myState.roomCode = '';
+      myState.isHost = false;
+      myState.drawnNumbers = [];
+      myState.participants = [];
+      
+      viewGame.classList.add('hidden');
+      roomInfoBar.classList.add('hidden');
+      viewTitle.classList.remove('hidden');
+    }
+
+
+    btnCreateRoom.addEventListener('click', () => {
+      const code = generateRoomCode();
+      const hostName = prompt("あなたのお名前を入力してください (主催者)", "ホスト") || "ホスト";
+
+      btnCreateRoom.disabled = true;
+      btnJoinRoomInit.disabled = true;
+      showToast('サーバーに接続しています...', 'info');
+
+      connectToRoom(code, hostName, true,
+        () => {
+          btnCreateRoom.disabled = false;
+          btnJoinRoomInit.disabled = false;
+          modalRoomCode.innerText = code.toUpperCase();
+          inviteModal.classList.remove('hidden');
+        },
+        () => {
+          btnCreateRoom.disabled = false;
+          btnJoinRoomInit.disabled = false;
+        }
+      );
+    });
+
+    btnJoinRoomInit.addEventListener('click', () => {
+      viewTitle.classList.add('hidden');
+      viewJoin.classList.remove('hidden');
+    });
+
+    btnBackToTitle.addEventListener('click', () => {
+      viewJoin.classList.add('hidden');
+      viewTitle.classList.remove('hidden');
+    });
+
+    btnJoinRoomSubmit.addEventListener('click', () => {
+      const code = inputRoomCode.value.trim().toLowerCase();
+      const name = inputUserName.value.trim();
+
+      if (code.length !== 6) {
+        showToast("招待コードは6桁の英数字です", "error");
+        return;
+      }
+      if (!name) {
+        showToast("お名前を入力してください", "error");
+        return;
+      }
+
+      btnJoinRoomSubmit.disabled = true;
+      showToast('サーバーに接続しています...', 'info');
+
+      connectToRoom(code, name, false,
+        () => {
+          btnJoinRoomSubmit.disabled = false;
+        },
+        () => {
+          btnJoinRoomSubmit.disabled = false;
+        }
+      );
+    });
+
+    btnDrawNumber.addEventListener('click', () => {
+      if (!myState.isHost) return;
+
+      const availableNumbers = [];
+      for (let i = 1; i <= 75; i++) {
+        if (!myState.drawnNumbers.includes(i)) {
+          availableNumbers.push(i);
+        }
+      }
+
+      if (availableNumbers.length === 0) {
+        showToast("すべての数字を引き終わりました！", "info");
+        return;
+      }
+
+      const randomIndex = Math.floor(Math.random() * availableNumbers.length);
+      const drawnNum = availableNumbers[randomIndex];
+
+      if (myState.ws && myState.ws.readyState === 1) {
+        myState.ws.send(JSON.stringify({
+          type: 'draw',
+          number: drawnNum
+        }));
+      }
+    });
+
+    btnKickAll.addEventListener('click', () => {
+      if (!myState.isHost) return;
+      if (confirm("本当に全員を退出させてゲームを終了しますか？ ルームデータは完全に消去されます。")) {
+        if (myState.ws && myState.ws.readyState === 1) {
+          myState.ws.send(JSON.stringify({
+            type: 'kick_all'
+          }));
+        }
+      }
+    });
+
+    btnRegenCard.addEventListener('click', () => {
+      if (confirm("カードを再生成しますか？ (これまでの穴あけ状態はリセットされます)")) {
+        myState.bingoCard = generateBingoCard();
+        renderBingoCard();
+        showToast("ビンゴカードをシャッフルしました", "success");
+      }
+    });
+
+    btnLeaveRoom.addEventListener('click', () => {
+      if (confirm("このルームから退室しますか？")) {
+        disconnectAndReset();
+        showToast("ルームから退出しました", "info");
+      }
+    });
+
+    btnCopyLink.addEventListener('click', () => {
+      const shareUrl = `${window.location.origin}${window.location.pathname}?code=${myState.roomCode}`;
+      copyToClipboard(shareUrl, "招待リンクをクリップボードにコピーしました！");
+    });
+
+    btnCopyCode.addEventListener('click', () => {
+      copyToClipboard(myState.roomCode.toUpperCase(), "招待コードをコピーしました！");
+    });
+
+    btnCloseInviteModal.addEventListener('click', () => {
+      inviteModal.classList.add('hidden');
+      showToast("ビンゴを開始しました！「次の数字を引く」を押して進めてください。", "success");
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const urlParams = new URLSearchParams(window.location.search);
+      const codeParam = urlParams.get('code');
+      if (codeParam && codeParam.length === 6) {
+        viewTitle.classList.add('hidden');
+        viewJoin.classList.remove('hidden');
+        inputRoomCode.value = codeParam.toLowerCase();
+        showToast("招待コードが自動入力されました", "success");
+      }
+    });
+  </script>
+</body>
+</html>
