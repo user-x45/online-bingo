@@ -55,26 +55,26 @@
     }
   </style>
 </head>
-<body class="h-screen w-screen overflow-hidden p-2 sm:p-4 flex items-center justify-center select-none">
+<body class="h-screen w-screen overflow-hidden p-2 sm:p-3 flex items-center justify-center select-none">
 
   <div class="w-full max-w-5xl h-full max-h-[96vh] bg-slate-900/95 backdrop-blur-md rounded-2xl border border-slate-700/50 shadow-2xl flex flex-col justify-between overflow-hidden">
     
-        <header class="bg-slate-800/50 border-b border-slate-700/50 px-4 py-2 flex items-center justify-between gap-3 shrink-0">
+        <header class="bg-slate-800/50 border-b border-slate-700/50 px-5 py-3 flex items-center justify-between gap-3 shrink-0">
       <div class="flex items-center gap-2">
-        <div class="bg-gradient-to-tr from-amber-500 to-rose-500 p-1.5 rounded-lg text-white shadow shadow-rose-950/40 shrink-0">
-          <i class="fa-solid fa-dice-five text-base"></i>
+        <div class="bg-gradient-to-tr from-amber-500 to-rose-500 p-2 rounded-lg text-white shadow shadow-rose-950/40 shrink-0">
+          <i class="fa-solid fa-dice-five text-xl"></i>
         </div>
         <div>
-          <h1 class="text-lg font-black bg-gradient-to-r from-amber-400 via-rose-400 to-indigo-400 bg-clip-text text-transparent leading-none">
+          <h1 class="text-2xl font-black bg-gradient-to-r from-amber-400 via-rose-400 to-indigo-400 bg-clip-text text-transparent leading-none">
             BINGO ONLINE
           </h1>
-          <p class="text-[9px] text-slate-400 mt-0.5">リアルタイム同期ビンゴ</p>
+          <p class="text-xs text-slate-400 mt-0.5">リアルタイム同期ビンゴ</p>
         </div>
       </div>
-            <div id="roomInfoBar" class="hidden flex items-center gap-2 bg-slate-950/60 px-2.5 py-1 rounded-lg border border-slate-800 shrink-0">
-        <span class="text-[10px] font-bold text-slate-300">コード: <span id="infoRoomCode" class="text-amber-400 font-mono tracking-wider">------</span></span>
+            <div id="roomInfoBar" class="hidden flex items-center gap-2 bg-slate-950/60 px-3 py-1.5 rounded-lg border border-slate-800 shrink-0">
+        <span class="text-sm font-bold text-slate-300">コード: <span id="infoRoomCode" class="text-amber-400 font-mono tracking-wider">------</span></span>
         <div class="h-2.5 w-px bg-slate-800"></div>
-        <span class="text-[10px] text-slate-300 flex items-center gap-1">
+        <span class="text-sm text-slate-300 flex items-center gap-1">
           <i class="fa-solid fa-users text-indigo-400"></i>
           <span id="infoUserCount">0</span>/30人
         </span>
@@ -83,47 +83,47 @@
 
         <main class="flex-1 p-2 sm:p-3 overflow-hidden flex flex-col justify-center min-h-0">
 
-            <section id="viewTitle" class="block py-4 text-center max-w-md mx-auto my-auto">
-        <h2 class="text-2xl sm:text-3xl font-extrabold mb-4 text-white tracking-wide leading-tight">
+            <section id="viewTitle" class="block py-6 text-center max-w-lg mx-auto my-auto">
+        <h2 class="text-3xl sm:text-4xl font-extrabold mb-5 text-white tracking-wide leading-tight">
           みんなで集まって、<br>
           <span class="text-amber-400">ビンゴ</span>を遊ぼう！
         </h2>
-        <p class="text-slate-400 mb-6 text-[11px] sm:text-xs leading-relaxed">
+        <p class="text-slate-400 mb-7 text-sm leading-relaxed">
           面倒なインストールや登録は一切不要。ルームを作成して、お友達にリンクを共有するだけで、スマホやPCからすぐに遊べます。最大30人まで同時に参加可能！
         </p>
 
-        <div class="space-y-2.5">
-          <button id="btnCreateRoom" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-bold py-3 px-5 rounded-xl shadow-lg transform active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
+        <div class="space-y-3">
+          <button id="btnCreateRoom" class="w-full bg-gradient-to-r from-amber-500 via-orange-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-bold py-4 px-6 rounded-xl shadow-lg transform active:scale-95 transition-all text-base flex items-center justify-center gap-2">
             <i class="fa-solid fa-plus-circle"></i>
             新しくルームを作成する
           </button>
           <div class="flex items-center gap-2 my-3">
             <hr class="flex-grow border-slate-800">
-            <span class="text-slate-500 text-[10px] uppercase font-bold">または</span>
+            <span class="text-slate-500 text-xs uppercase font-bold">または</span>
             <hr class="flex-grow border-slate-800">
           </div>
-          <button id="btnJoinRoomInit" class="w-full bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700/80 font-bold py-3 px-5 rounded-xl shadow transform active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
+          <button id="btnJoinRoomInit" class="w-full bg-slate-800 hover:bg-slate-750 text-slate-200 border border-slate-700/80 font-bold py-4 px-6 rounded-xl shadow transform active:scale-95 transition-all text-base flex items-center justify-center gap-2">
             <i class="fa-solid fa-arrow-right-to-bracket"></i>
             招待コードを入力して参加する
           </button>
         </div>
       </section>
 
-            <section id="viewJoin" class="hidden py-4 max-w-md mx-auto my-auto w-full">
-        <button id="btnBackToTitle" class="mb-3 flex items-center gap-1.5 text-[11px] text-slate-400 hover:text-white transition">
+            <section id="viewJoin" class="hidden py-6 max-w-lg mx-auto my-auto w-full">
+        <button id="btnBackToTitle" class="mb-4 flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition">
           <i class="fa-solid fa-arrow-left"></i> タイトルに戻る
         </button>
-        <h2 class="text-lg font-bold mb-3 text-white">ルームに参加する</h2>
+        <h2 class="text-2xl font-bold mb-4 text-white">ルームに参加する</h2>
         <div class="space-y-3">
           <div>
-            <label for="inputRoomCode" class="block text-[10px] font-medium text-slate-400 mb-1">6文字の招待コード</label>
-            <input type="text" id="inputRoomCode" placeholder="例: a1b2c3" maxlength="6" class="w-full text-center tracking-widest font-mono text-lg uppercase bg-slate-950 border border-slate-700 rounded-lg py-2 text-amber-400 placeholder:text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-transparent transition-all">
+            <label for="inputRoomCode" class="block text-sm font-medium text-slate-400 mb-1.5">6文字の招待コード</label>
+            <input type="text" id="inputRoomCode" placeholder="例: a1b2c3" maxlength="6" class="w-full text-center tracking-widest font-mono text-2xl uppercase bg-slate-950 border border-slate-700 rounded-lg py-3 text-amber-400 placeholder:text-slate-800 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-transparent transition-all">
           </div>
           <div>
-            <label for="inputUserName" class="block text-[10px] font-medium text-slate-400 mb-1">あなたのお名前</label>
-            <input type="text" id="inputUserName" placeholder="プレイヤー名" maxlength="15" class="w-full bg-slate-950 border border-slate-700 rounded-lg py-2 px-3 text-sm text-slate-100 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-transparent transition-all">
+            <label for="inputUserName" class="block text-sm font-medium text-slate-400 mb-1.5">あなたのお名前</label>
+            <input type="text" id="inputUserName" placeholder="プレイヤー名" maxlength="15" class="w-full bg-slate-950 border border-slate-700 rounded-lg py-3 px-3 text-base text-slate-100 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-transparent transition-all">
           </div>
-          <button id="btnJoinRoomSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-5 rounded-lg shadow-lg transform active:scale-95 transition-all text-sm flex items-center justify-center gap-2">
+          <button id="btnJoinRoomSubmit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 px-5 rounded-lg shadow-lg transform active:scale-95 transition-all text-base flex items-center justify-center gap-2">
             <i class="fa-solid fa-circle-play"></i>
             ルームに接続
           </button>
@@ -135,16 +135,16 @@
           
                     <div class="md:col-span-7 flex flex-col gap-2.5 h-full overflow-hidden min-h-0">
             
-                        <div id="bingoCardArea" class="bg-slate-950/80 p-3 sm:p-4 rounded-xl border border-slate-800/80 flex flex-col justify-between flex-1 min-h-0 overflow-hidden">
-              <div class="flex items-center justify-between mb-1.5 shrink-0">
-                <h3 class="text-xs font-bold text-slate-200 flex items-center gap-1.5">
+                        <div id="bingoCardArea" class="bg-slate-950/80 p-4 sm:p-5 rounded-xl border border-slate-800/80 flex flex-col justify-between flex-1 min-h-0 overflow-hidden">
+              <div class="flex items-center justify-between mb-2 shrink-0">
+                <h3 class="text-sm font-bold text-slate-200 flex items-center gap-1.5">
                   <i class="fa-solid fa-table-cells text-amber-500"></i>
                   あなたのビンゴカード
                 </h3>
-                <span class="text-[9px] text-slate-400 hidden sm:inline">タップして手動で穴を開けます</span>
+                <span class="text-xs text-slate-400 hidden sm:inline">タップして手動で穴を開けます</span>
               </div>
               
-                            <div class="grid grid-cols-5 gap-1.5 mb-1 text-center text-base font-black shrink-0">
+                            <div class="grid grid-cols-5 gap-1.5 mb-2 text-center text-xl font-black shrink-0">
                 <span class="text-rose-400">B</span>
                 <span class="text-amber-400">I</span>
                 <span class="text-indigo-400">N</span>
@@ -153,36 +153,36 @@
               </div>
 
                             <div class="flex-1 flex items-center justify-center min-h-0 overflow-hidden">
-                <div id="bingoGrid" class="grid grid-cols-5 gap-1 sm:gap-1.5 w-full max-w-[42vh] aspect-square mx-auto">
+                <div id="bingoGrid" class="grid grid-cols-5 gap-1.5 sm:gap-2 w-full max-w-[48vh] aspect-square mx-auto">
                                   </div>
               </div>
 
-                            <div class="mt-1.5 flex justify-end shrink-0">
-                <button id="btnRegenCard" class="text-[9px] bg-slate-900 hover:bg-slate-800 text-slate-400 py-0.5 px-2 rounded-md border border-slate-800 transition flex items-center gap-1">
-                  <i class="fa-solid fa-rotate text-[8px]"></i> カードをシャッフル
+                            <div class="mt-2 flex justify-end shrink-0">
+                <button id="btnRegenCard" class="text-xs bg-slate-900 hover:bg-slate-800 text-slate-400 py-1 px-2.5 rounded-md border border-slate-800 transition flex items-center gap-1">
+                  <i class="fa-solid fa-rotate text-xs"></i> カードをシャッフル
                 </button>
               </div>
             </div>
 
-                        <div id="hostControls" class="hidden bg-slate-950/80 p-2.5 rounded-xl border border-rose-950/40 relative overflow-hidden shrink-0">
-              <div class="absolute top-0 right-0 bg-rose-600/20 text-rose-400 text-[8px] uppercase font-bold tracking-wider px-1.5 py-0.5 rounded-bl-lg border-l border-b border-rose-900/50">
+                        <div id="hostControls" class="hidden bg-slate-950/80 p-3 rounded-xl border border-rose-950/40 relative overflow-hidden shrink-0">
+              <div class="absolute top-0 right-0 bg-rose-600/20 text-rose-400 text-xs uppercase font-bold tracking-wider px-2 py-1 rounded-bl-lg border-l border-b border-rose-900/50">
                 管理者
               </div>
               
-              <h3 class="text-[10px] font-bold text-rose-300 mb-1.5 flex items-center gap-1">
+              <h3 class="text-sm font-bold text-rose-300 mb-2 flex items-center gap-1">
                 <i class="fa-solid fa-crown"></i>
                 ビンゴ抽選コントロール
               </h3>
               
               <div class="grid grid-cols-2 gap-2">
-                                <button id="btnDrawNumber" class="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-extrabold py-1.5 px-2 rounded-lg shadow-md transform active:scale-95 transition-all flex flex-col items-center justify-center">
-                  <span class="text-xs">次の数字を引く</span>
-                  <span class="text-[8px] font-normal opacity-80">(1〜75から抽選)</span>
+                                <button id="btnDrawNumber" class="bg-gradient-to-r from-amber-500 to-rose-500 hover:from-amber-600 hover:to-rose-600 text-white font-extrabold py-2.5 px-3 rounded-lg shadow-md transform active:scale-95 transition-all flex flex-col items-center justify-center">
+                  <span class="text-sm font-bold">次の数字を引く</span>
+                  <span class="text-xs font-normal opacity-80">(1〜75から抽選)</span>
                 </button>
                 
-                                <button id="btnKickAll" class="bg-rose-950/40 hover:bg-rose-900/60 text-rose-200 border border-rose-900/60 font-bold py-1.5 px-2 rounded-lg transform active:scale-95 transition-all flex flex-col items-center justify-center">
-                  <span class="text-xs flex items-center gap-1"><i class="fa-solid fa-users-slash text-[10px]"></i> 全員を強制退出</span>
-                  <span class="text-[8px] font-normal text-rose-400/80">ゲーム終了＆ルーム消去</span>
+                                <button id="btnKickAll" class="bg-rose-950/40 hover:bg-rose-900/60 text-rose-200 border border-rose-900/60 font-bold py-2.5 px-3 rounded-lg transform active:scale-95 transition-all flex flex-col items-center justify-center">
+                  <span class="text-sm flex items-center gap-1"><i class="fa-solid fa-users-slash text-xs"></i> 全員を強制退出</span>
+                  <span class="text-xs font-normal text-rose-400/80">ゲーム終了＆ルーム消去</span>
                 </button>
               </div>
             </div>
@@ -191,47 +191,47 @@
 
                     <div class="md:col-span-5 flex flex-col gap-2.5 h-full overflow-hidden min-h-0">
             
-                        <div class="grid grid-cols-12 gap-2.5 shrink-0">
-                            <div class="col-span-5 bg-slate-950/80 p-2 rounded-xl border border-slate-800/80 text-center flex flex-col justify-center items-center">
-                <h3 class="text-[8px] font-bold text-slate-400 uppercase tracking-wider mb-1">現在の番号</h3>
+                        <div class="grid grid-cols-12 gap-3 shrink-0">
+                            <div class="col-span-5 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 text-center flex flex-col justify-center items-center">
+                <h3 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">現在の番号</h3>
                 <div class="flex items-center justify-center">
-                  <div id="currentDrawnNumber" class="w-11 h-11 rounded-full bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 text-white text-lg font-extrabold flex items-center justify-center shadow-md border-2 border-slate-900 drawn-number-anim">
+                  <div id="currentDrawnNumber" class="w-16 h-16 rounded-full bg-gradient-to-tr from-amber-400 via-orange-500 to-rose-500 text-white text-2xl font-extrabold flex items-center justify-center shadow-md border-2 border-slate-900 drawn-number-anim">
                     --
                   </div>
                 </div>
-                <p id="drawStatusText" class="text-[8px] text-amber-400/80 mt-1 truncate w-full">抽選待ち</p>
+                <p id="drawStatusText" class="text-xs text-amber-400/80 mt-2 truncate w-full">抽選待ち</p>
               </div>
 
-                            <div class="col-span-7 bg-slate-950/80 p-2 rounded-xl border border-slate-800/80 flex flex-col justify-between overflow-hidden">
-                <h3 class="text-[9px] font-bold text-slate-300 flex items-center justify-between mb-1">
+                            <div class="col-span-7 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 flex flex-col justify-between overflow-hidden">
+                <h3 class="text-sm font-bold text-slate-300 flex items-center justify-between mb-2">
                   <span><i class="fa-solid fa-history"></i> 履歴</span>
-                  <span id="drawnCount" class="text-[8px] text-slate-500">0 / 75</span>
+                  <span id="drawnCount" class="text-xs text-slate-500">0 / 75</span>
                 </h3>
-                <div id="historyNumbersGrid" class="grid grid-cols-10 gap-0.5 p-1 bg-slate-900/50 rounded-lg overflow-y-auto h-12 text-[7px] text-center font-bold">
+                <div id="historyNumbersGrid" class="grid grid-cols-10 gap-1 p-1.5 bg-slate-900/50 rounded-lg overflow-y-auto h-20 text-xs text-center font-bold">
                                   </div>
               </div>
             </div>
 
-                        <div class="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80 flex flex-col shrink-0">
-              <div class="flex items-center justify-between mb-1.5">
-                <h3 class="text-[10px] font-bold text-slate-300 flex items-center gap-1">
+                        <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 flex flex-col shrink-0">
+              <div class="flex items-center justify-between mb-2">
+                <h3 class="text-sm font-bold text-slate-300 flex items-center gap-1">
                   <i class="fa-solid fa-users text-indigo-400"></i>
                   参加者 (<span id="userCountLabel">0</span>人)
                 </h3>
-                                <button id="btnLeaveRoom" class="bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-[9px] font-bold py-0.5 px-2 rounded shadow-md shadow-rose-900/30 transition flex items-center gap-1">
-                  <i class="fa-solid fa-door-open text-[8px]"></i> 退出
+                                <button id="btnLeaveRoom" class="bg-rose-600 hover:bg-rose-700 active:scale-95 text-white text-xs font-bold py-1 px-2.5 rounded shadow-md shadow-rose-900/30 transition flex items-center gap-1">
+                  <i class="fa-solid fa-door-open text-xs"></i> 退出
                 </button>
               </div>
-              <div id="userList" class="flex flex-wrap gap-1 max-h-12 overflow-y-auto p-1 bg-slate-900/30 rounded-lg">
+              <div id="userList" class="flex flex-wrap gap-1.5 max-h-20 overflow-y-auto p-1.5 bg-slate-900/30 rounded-lg">
                               </div>
             </div>
 
-                        <div class="bg-slate-950/80 p-2.5 rounded-xl border border-slate-800/80 flex flex-col flex-1 overflow-hidden min-h-[80px]">
-              <h3 class="text-[10px] font-bold text-slate-300 mb-1 flex items-center gap-1">
+                        <div class="bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 flex flex-col flex-1 overflow-hidden min-h-[80px]">
+              <h3 class="text-sm font-bold text-slate-300 mb-1.5 flex items-center gap-1">
                 <i class="fa-solid fa-list-ul text-slate-400"></i>
                 イベントログ
               </h3>
-              <div id="eventLogs" class="flex-1 overflow-y-auto text-[9px] space-y-0.5 p-1.5 bg-slate-900/50 rounded-lg font-mono text-slate-300">
+              <div id="eventLogs" class="flex-1 overflow-y-auto text-xs space-y-1 p-2 bg-slate-900/50 rounded-lg font-mono text-slate-300">
                               </div>
             </div>
 
@@ -242,46 +242,46 @@
 
     </main>
 
-        <footer class="bg-slate-950/40 p-1.5 border-t border-slate-800/50 text-center text-[9px] text-slate-500 shrink-0">
+        <footer class="bg-slate-950/40 p-2 border-t border-slate-800/50 text-center text-xs text-slate-500 shrink-0">
       オンライン・ビンゴ (Cloudflare Worker) &copy; 2026. リアルタイム同期
     </footer>
   </div>
 
     <div id="inviteModal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-    <div class="bg-slate-900 border border-slate-700 max-w-sm w-full p-4 rounded-2xl shadow-2xl text-center space-y-4">
-      <div class="bg-amber-500/10 w-10 h-10 rounded-xl flex items-center justify-center mx-auto text-amber-400 text-lg border border-amber-500/30">
+    <div class="bg-slate-900 border border-slate-700 max-w-md w-full p-6 rounded-2xl shadow-2xl text-center space-y-5">
+      <div class="bg-amber-500/10 w-14 h-14 rounded-xl flex items-center justify-center mx-auto text-amber-400 text-2xl border border-amber-500/30">
         <i class="fa-solid fa-share-nodes"></i>
       </div>
       <div>
-        <h3 class="text-base font-bold text-white">ルームを作成しました！</h3>
-        <p class="text-[10px] text-slate-400 mt-0.5">以下のコードまたはリンクを参加者にシェアしてください。</p>
+        <h3 class="text-xl font-bold text-white">ルームを作成しました！</h3>
+        <p class="text-sm text-slate-400 mt-1">以下のコードまたはリンクを参加者にシェアしてください。</p>
       </div>
       
-            <div class="bg-slate-950 p-2 rounded-lg border border-slate-800">
-        <div class="text-[8px] text-slate-500 uppercase tracking-widest font-bold mb-0.5">招待コード</div>
-        <div id="modalRoomCode" class="text-xl font-black font-mono tracking-wider text-amber-400">------</div>
+            <div class="bg-slate-950 p-3 rounded-lg border border-slate-800">
+        <div class="text-xs text-slate-500 uppercase tracking-widest font-bold mb-1">招待コード</div>
+        <div id="modalRoomCode" class="text-3xl font-black font-mono tracking-wider text-amber-400">------</div>
       </div>
 
-            <div class="flex flex-col gap-1.5">
-        <button id="btnCopyLink" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-3 rounded-lg text-[11px] transition flex items-center justify-center gap-1.5">
+            <div class="flex flex-col gap-2">
+        <button id="btnCopyLink" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2">
           <i class="fa-solid fa-copy"></i>
           招待リンクをコピー
         </button>
-        <button id="btnCopyCode" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2 px-3 rounded-lg text-[11px] transition flex items-center justify-center gap-1.5 border border-slate-700">
+        <button id="btnCopyCode" class="w-full bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold py-2.5 px-4 rounded-lg text-sm transition flex items-center justify-center gap-2 border border-slate-700">
           <i class="fa-solid fa-clipboard"></i>
           招待コードをコピー
         </button>
       </div>
 
-      <div class="pt-1.5 border-t border-slate-800">
-        <button id="btnCloseInviteModal" class="w-full bg-slate-750 hover:bg-slate-700 text-slate-300 font-bold py-2 px-3 rounded-lg text-[11px] transition">
+      <div class="pt-2 border-t border-slate-800">
+        <button id="btnCloseInviteModal" class="w-full bg-slate-750 hover:bg-slate-700 text-slate-300 font-bold py-2.5 px-4 rounded-lg text-sm transition">
           閉じてビンゴを始める
         </button>
       </div>
     </div>
   </div>
 
-    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-1.5 max-w-sm pointer-events-none"></div>
+    <div id="toastContainer" class="fixed bottom-4 right-4 z-50 flex flex-col gap-2 max-w-sm pointer-events-none"></div>
 
         <script>
     const appId = typeof __app_id !== 'undefined' ? __app_id : 'bingo-app';
@@ -347,7 +347,7 @@
     function showToast(message, type = 'info') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
-      toast.className = `p-3 rounded-xl shadow-lg border text-[11px] font-semibold flex items-center gap-2 transform translate-y-2 opacity-0 transition-all duration-300 pointer-events-auto max-w-xs `;
+      toast.className = `p-3 rounded-xl shadow-lg border text-sm font-semibold flex items-center gap-2 transform translate-y-2 opacity-0 transition-all duration-300 pointer-events-auto max-w-xs `;
       
       if (type === 'error') {
         toast.className += 'bg-rose-950/95 border-rose-800 text-rose-200';
@@ -577,12 +577,12 @@
       userList.innerHTML = '';
       myState.participants.forEach(user => {
         const badge = document.createElement('span');
-        badge.className = `inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full text-[9px] font-bold border ` + 
+        badge.className = `inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold border ` + 
           (user.isHost 
             ? 'bg-amber-950/60 text-amber-300 border-amber-800' 
             : 'bg-slate-900 text-slate-300 border-slate-800');
         badge.innerHTML = `
-          ${user.isHost ? '<i class="fa-solid fa-crown text-[8px]"></i>' : '<i class="fa-solid fa-user text-[8px]"></i>'}
+          ${user.isHost ? '<i class="fa-solid fa-crown text-xs"></i>' : '<i class="fa-solid fa-user text-xs"></i>'}
           ${user.name}
         `;
         userList.appendChild(badge);
@@ -732,7 +732,8 @@
       myState.isHost = false;
       myState.drawnNumbers = [];
       myState.participants = [];
-      
+      eventLogs.innerHTML = '';
+
       viewGame.classList.add('hidden');
       roomInfoBar.classList.add('hidden');
       viewTitle.classList.remove('hidden');
@@ -843,6 +844,10 @@
     });
 
     btnLeaveRoom.addEventListener('click', () => {
+      if (myState.isHost) {
+        showToast("ホストは単独で退出できません。「全員を強制退出」でゲームを終了してください。", "error");
+        return;
+      }
       if (confirm("このルームから退室しますか？")) {
         disconnectAndReset();
         showToast("ルームから退出しました", "info");
