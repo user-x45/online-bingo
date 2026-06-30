@@ -131,9 +131,17 @@
       </section>
 
             <section id="viewGame" class="hidden sm:h-full flex flex-col justify-between overflow-visible sm:overflow-hidden min-h-0">
+        <div id="mobileTabBar" class="sm:hidden grid grid-cols-2 gap-2 mb-2 shrink-0">
+          <button id="tabBtnCard" type="button" class="py-2 px-3 rounded-lg text-sm font-bold border border-slate-800 transition flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-table-cells"></i> ビンゴカード
+          </button>
+          <button id="tabBtnStatus" type="button" class="py-2 px-3 rounded-lg text-sm font-bold border border-slate-800 transition flex items-center justify-center gap-1.5">
+            <i class="fa-solid fa-list-ul"></i> 状況・参加者
+          </button>
+        </div>
         <div class="grid grid-cols-1 md:grid-cols-12 gap-3 sm:h-full overflow-visible sm:overflow-hidden min-h-0">
           
-                    <div class="md:col-span-7 flex flex-col gap-2.5 sm:h-full overflow-visible sm:overflow-hidden min-h-0">
+                    <div id="gamePanelCard" class="md:col-span-7 flex sm:flex flex-col gap-2.5 sm:h-full overflow-visible sm:overflow-hidden min-h-0">
             
                         <div id="bingoCardArea" class="bg-slate-950/80 p-4 sm:p-5 rounded-xl border border-slate-800/80 flex flex-col justify-between flex-1 min-h-0 overflow-visible sm:overflow-hidden">
               <div class="flex items-center justify-between mb-2 shrink-0">
@@ -189,7 +197,7 @@
 
           </div>
 
-                    <div class="md:col-span-5 flex flex-col gap-2.5 sm:h-full overflow-visible sm:overflow-hidden min-h-0">
+                    <div id="gamePanelStatus" class="md:col-span-5 flex sm:flex flex-col gap-2.5 sm:h-full overflow-visible sm:overflow-hidden min-h-0">
             
                         <div class="grid grid-cols-12 gap-3 shrink-0">
                             <div class="col-span-5 bg-slate-950/80 p-3 rounded-xl border border-slate-800/80 text-center flex flex-col justify-center items-center">
@@ -338,6 +346,11 @@
     const btnRegenCard = document.getElementById('btnRegenCard');
     const btnLeaveRoom = document.getElementById('btnLeaveRoom');
 
+    const gamePanelCard = document.getElementById('gamePanelCard');
+    const gamePanelStatus = document.getElementById('gamePanelStatus');
+    const tabBtnCard = document.getElementById('tabBtnCard');
+    const tabBtnStatus = document.getElementById('tabBtnStatus');
+
     const inviteModal = document.getElementById('inviteModal');
     const modalRoomCode = document.getElementById('modalRoomCode');
     const btnCopyLink = document.getElementById('btnCopyLink');
@@ -392,6 +405,27 @@
         showToast('コピーに失敗しました', 'error');
       }
       document.body.removeChild(tempInput);
+    }
+
+    function setMobileTab(tab) {
+      const activeClasses = ['bg-amber-500/10', 'border-amber-500/50', 'text-amber-400'];
+      const inactiveClasses = ['bg-slate-900', 'border-slate-800', 'text-slate-400'];
+
+      if (tab === 'card') {
+        gamePanelCard.classList.remove('hidden');
+        gamePanelStatus.classList.add('hidden');
+        tabBtnCard.classList.remove(...inactiveClasses);
+        tabBtnCard.classList.add(...activeClasses);
+        tabBtnStatus.classList.remove(...activeClasses);
+        tabBtnStatus.classList.add(...inactiveClasses);
+      } else {
+        gamePanelStatus.classList.remove('hidden');
+        gamePanelCard.classList.add('hidden');
+        tabBtnStatus.classList.remove(...inactiveClasses);
+        tabBtnStatus.classList.add(...activeClasses);
+        tabBtnCard.classList.remove(...activeClasses);
+        tabBtnCard.classList.add(...inactiveClasses);
+      }
     }
 
     function addLog(text, isSystem = true) {
@@ -661,6 +695,7 @@
           viewJoin.classList.add('hidden');
           viewGame.classList.remove('hidden');
           roomInfoBar.classList.remove('hidden');
+          setMobileTab('card');
           onSuccess();
         }
 
@@ -842,6 +877,10 @@
         showToast("ビンゴカードをシャッフルしました", "success");
       }
     });
+
+    tabBtnCard.addEventListener('click', () => setMobileTab('card'));
+    tabBtnStatus.addEventListener('click', () => setMobileTab('status'));
+    setMobileTab('card');
 
     btnLeaveRoom.addEventListener('click', () => {
       if (myState.isHost) {
